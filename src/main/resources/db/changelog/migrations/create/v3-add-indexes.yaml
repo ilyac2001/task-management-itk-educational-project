@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: ilya-tsimerman
+      changes:
+        - createIndex:
+            tableName: tasks
+            indexName: idx_tasks_id
+            columns:
+              - column:
+                  name: id
+        - createIndex:
+            tableName: tasks
+            indexName: idx_tasks_assignee_id
+            columns:
+              - column:
+                  name: assignee_id
+        - createIndex:
+            tableName: tasks
+            indexName: idx_tasks_status
+            columns:
+              - column:
+                  name: status
