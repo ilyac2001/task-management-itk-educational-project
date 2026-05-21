@@ -1,1 +1,3 @@
-rootProject.name = 'itk-test-task'
+rootProject.name = 'task-management'
+
+include 'task-service'
