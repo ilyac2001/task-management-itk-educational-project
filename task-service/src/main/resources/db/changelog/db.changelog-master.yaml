@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - include:
+      file: migrations/create/v1-initialize-database.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: migrations/update/v2-insert-test-user.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: migrations/create/v3-add-indexes.yaml
+      relativeToChangelogFile: true

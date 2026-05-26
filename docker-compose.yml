@@ -28,7 +28,7 @@ services:
       KAFKA_NUM_PARTITIONS: 1
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
-  app:
+  task-service:
     build: task-service
     container_name: task-service
     depends_on:
@@ -41,6 +41,21 @@ services:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     ports:
       - "8080:8080"
+
+  auth-service:
+    build: auth-service
+    container_name: auth-service
+    depends_on:
+      - postgres
+    environment:
+      SERVER_PORT: 8081
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/task_management
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      OAUTH_CLIENT_ID: ${OAUTH_CLIENT_ID}
+      OAUTH_CLIENT_SECRET: ${OAUTH_CLIENT_SECRET}
+    ports:
+      - "8081:8081"
 
 volumes:
   postgres_data:

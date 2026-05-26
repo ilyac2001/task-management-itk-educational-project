@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: v2-insert-test-user
+      author: ilya
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 1
+              - column:
+                  name: name
+                  value: "Илья"
+              - column:
+                  name: email
+                  value: "ilya@example.com"

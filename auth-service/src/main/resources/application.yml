@@ -1,0 +1,22 @@
+server.port: 8081
+
+spring:
+  application:
+    name: auth-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/task_management
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+security:
+  oauth2:
+    client:
+      id: ${OAUTH_CLIENT_ID:client}
+      secret: ${OAUTH_CLIENT_SECRET:secret}
+    token:
+      access-token-validity-seconds: 3600
+      refresh-token-validity-seconds: 86400

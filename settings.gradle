@@ -1,3 +1,4 @@
 rootProject.name = 'task-management'
 
 include 'task-service'
+include 'auth-service'
