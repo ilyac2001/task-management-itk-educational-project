@@ -45,6 +45,32 @@
    {
      "status": DONE
    }
+## KAFKA
+Сервис публикует события в Kafka при создании и изменении задач.
+
+| Topic         | Description             |
+|---------------|-------------------------|
+| task-stream   | Состояние задачи        |
+| task-flow     | Событие создания задачи |
+
+**Event**
+- TaskStreamEvent
+   ```json
+   {
+      "id": 1,
+      "title": "Название задачи",
+      "description": "Описание задачи",
+      "status": "IN_PROGRESS",
+      "assigneeId": 5
+   }
+  ```
+- TaskCreatedFlowEvent
+   ```json
+   {
+    "taskId": 1,
+    "createdAt": "2026-05-26T12:00:00Z"
+   }
+  ```
 
 ## Технологии
 - Java 21, Spring Boot 3

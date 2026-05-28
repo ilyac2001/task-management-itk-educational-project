@@ -6,8 +6,8 @@ import ilya.tsimerman.taskservice.domain.data.mapper.PageMapper;
 import ilya.tsimerman.taskservice.domain.data.mapper.TaskMapper;
 import ilya.tsimerman.taskservice.domain.data.model.Task;
 import ilya.tsimerman.taskservice.domain.data.model.User;
-import ilya.tsimerman.taskservice.domain.event.TaskEvent;
-import ilya.tsimerman.taskservice.domain.event.TaskEventType;
+import ilya.tsimerman.taskservice.domain.event.TaskCreatedFlowEvent;
+import ilya.tsimerman.taskservice.domain.event.TaskStreamEvent;
 import ilya.tsimerman.taskservice.domain.exception.EntityNotFoundException;
 import ilya.tsimerman.taskservice.domain.repository.TaskRepository;
 import ilya.tsimerman.taskservice.domain.repository.UserRepository;
@@ -18,6 +18,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Instant;
 
 @RequiredArgsConstructor
 @Service
@@ -49,10 +51,21 @@ public class TaskServiceImpl implements TaskService {
 
         Task savedTask = taskRepository.save(task);
 
-        taskEventPublisher.publish(TaskEvent.builder()
-                .taskId(savedTask.getId())
-                .eventType(TaskEventType.CREATED)
-                .build()
+        taskEventPublisher.publish(
+                new TaskCreatedFlowEvent(
+                        savedTask.getId(),
+                        Instant.now()
+                )
+        );
+
+        taskEventPublisher.publish(
+                new TaskStreamEvent(
+                        savedTask.getId(),
+                        savedTask.getTitle(),
+                        savedTask.getDescription(),
+                        savedTask.getStatus(),
+                        null
+                )
         );
     }
 
@@ -70,11 +83,14 @@ public class TaskServiceImpl implements TaskService {
         task.setAssignee(user);
         task.setStatus(TaskStatus.IN_PROGRESS);
 
-        taskEventPublisher.publish(TaskEvent.builder()
-                .taskId(task.getId())
-                .eventType(TaskEventType.ASSIGNED)
-                .assignee(task.getAssignee().getId())
-                .build()
+        taskEventPublisher.publish(
+                new TaskStreamEvent(
+                        task.getId(),
+                        task.getTitle(),
+                        task.getDescription(),
+                        task.getStatus(),
+                        user.getId()
+                )
         );
     }
 
@@ -85,5 +101,15 @@ public class TaskServiceImpl implements TaskService {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Задача не найдена %s".formatted(id)));
         task.setStatus(newStatus);
+
+        taskEventPublisher.publish(
+                new TaskStreamEvent(
+                        task.getId(),
+                        task.getTitle(),
+                        task.getDescription(),
+                        task.getStatus(),
+                        task.getAssignee() != null ? task.getAssignee().getId() : null
+                )
+        );
     }
 }

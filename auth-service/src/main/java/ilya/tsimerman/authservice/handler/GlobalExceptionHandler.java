@@ -1,26 +1,34 @@
 package ilya.tsimerman.authservice.handler;
 
 import ilya.tsimerman.authservice.domain.dto.ErrorResponse;
+import ilya.tsimerman.authservice.domain.exception.KeycloakException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({BadCredentialsException.class, UsernameNotFoundException.class})
-    public ResponseEntity<ErrorResponse> handleBadCredentials(Exception ex, HttpServletRequest request) {
-        return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body(buildErrorResponse("Неверный логин или пароль", ex.getMessage(), request));
+    @ExceptionHandler(KeycloakException.class)
+    public ResponseEntity<ErrorResponse> handleKeycloak(KeycloakException ex,
+                                                        HttpServletRequest request) {
+
+        log.warn("Ошибка Keycloak: status={}, body={}",
+                ex.getStatus(),
+                ex.getResponseBody());
+
+        return ResponseEntity.status(ex.getStatus())
+                .body(buildErrorResponse(
+                        "Ошибка Keycloak",
+                        ex.getMessage(),
+                        request
+                ));
     }
 
     @ExceptionHandler(Exception.class)

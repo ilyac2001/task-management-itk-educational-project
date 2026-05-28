@@ -17,16 +17,35 @@ services:
     container_name: kafka
     ports:
       - "9092:9092"
+      - "29092:29092"
     environment:
       KAFKA_PROCESS_ROLES: broker,controller
       KAFKA_NODE_ID: 1
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093,EXTERNAL://0.0.0.0:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,EXTERNAL://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
       KAFKA_NUM_PARTITIONS: 1
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: keycloak
+    command: start-dev
+    environment:
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/task_management
+      KC_DB_USERNAME: ${POSTGRES_USERNAME}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "9091:8080"
+    depends_on:
+      - postgres
 
   task-service:
     build: task-service
@@ -46,16 +65,12 @@ services:
     build: auth-service
     container_name: auth-service
     depends_on:
-      - postgres
+      - keycloak
+      - kafka
     environment:
-      SERVER_PORT: 8081
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/task_management
-      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
-      OAUTH_CLIENT_ID: ${OAUTH_CLIENT_ID}
-      OAUTH_CLIENT_SECRET: ${OAUTH_CLIENT_SECRET}
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     ports:
-      - "8081:8081"
+      - "8081:8080"
 
 volumes:
   postgres_data:

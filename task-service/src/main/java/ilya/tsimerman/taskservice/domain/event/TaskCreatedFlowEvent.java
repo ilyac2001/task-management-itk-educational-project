@@ -2,9 +2,10 @@ package ilya.tsimerman.taskservice.domain.event;
 
 import lombok.Builder;
 
+import java.time.Instant;
+
 @Builder
-public record TaskEvent(
+public record TaskCreatedFlowEvent(
         Long taskId,
-        TaskEventType eventType,
-        Long assignee
+        Instant createdAt
 ) {}

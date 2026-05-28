@@ -1,6 +1,7 @@
 package ilya.tsimerman.taskservice.service.kafka;
 
-import ilya.tsimerman.taskservice.domain.event.TaskEvent;
+import ilya.tsimerman.taskservice.domain.event.TaskCreatedFlowEvent;
+import ilya.tsimerman.taskservice.domain.event.TaskStreamEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -8,12 +9,16 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class TaskEventPublisher {
+    private static final String TASK_STREAM_TOPIC = "task-stream";
+    private static final String TASK_FLOW_TOPIC = "task-flow";
 
-    private static final String TOPIC = "task-events";
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    private final KafkaTemplate<String, TaskEvent> kafkaTemplate;
+    public void publish(TaskCreatedFlowEvent event) {
+        kafkaTemplate.send(TASK_STREAM_TOPIC, String.valueOf(event.taskId()), event);
+    }
 
-    public void publish(TaskEvent event) {
-        kafkaTemplate.send(TOPIC, String.valueOf(event.taskId()), event);
+    public void publish(TaskStreamEvent event) {
+        kafkaTemplate.send(TASK_FLOW_TOPIC, String.valueOf(event.id()), event);
     }
 }
