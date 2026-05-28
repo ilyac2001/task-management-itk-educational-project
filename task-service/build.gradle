@@ -6,7 +6,7 @@ plugins {
 
 group = 'ilya.tsimerman'
 version = '1.0-SNAPSHOT'
-description = 'task service with REST API, PostgreSQL, Kafka, Docker, and Spring Boot'
+description = 'task-service'
 
 java {
     toolchain {

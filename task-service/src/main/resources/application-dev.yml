@@ -1,3 +1,6 @@
+server.port: 8080
+spring.datasource.url: jdbc:postgresql://localhost:5432/task_management
+
 spring:
   jpa:
     show-sql: true

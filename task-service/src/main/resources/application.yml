@@ -1,10 +1,9 @@
-server.port: 8080
 spring:
   application:
     name: task-service
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/task_management
+    url: jdbc:postgresql://postgres:5432/task_management
     username: ${POSTGRES_USERNAME}
     password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver

@@ -6,6 +6,7 @@
 ## Микросервисы
 - task-service
 - auth-service
+- api-gateway
 
 ## Настройка проекта
 
@@ -57,8 +58,38 @@ Realm → Clients → auth-service (Client ID) → Credentials
   - KEYCLOAK_CLIENT_ID=auth-service (из Client ID)
   - KEYCLOAK_CLIENT_SECRET=secret (из Client Secret)
 
+5. Настроить KEYCLOAK, а именно roles  
+**Перейти http://localhost:9091 в Keycloak Admin Console**  
+   Войти под (из .env):
+- KEYCLOAK_ADMIN=admin_login
+- KEYCLOAK_ADMIN_PASSWORD=admin_password  
+
+**Настроить передачу User Realm Role в userinfo**  
+Client scopes → Client scope details → role (Protocol=openid-connect) → 
+Mappers → Add mapper → By configuration → User Realm Role  
+И настроить
+
+| Поле                | Значение           |
+|---------------------|--------------------|
+| Name                | realm-roles        |
+| Mapper Type         | User Realm Role    |
+| Multivalued         | ON                 |
+| Token Claim Name    | realm_access.roles |
+| Add to userinfo     | ON                 |
+| Add to access token | ON                 |
+→ SAVE
+
+**Создать Realm Role**  
+Realm roles → Create role  
+Role name = USER (можно любую роль)  
+→ SAVE
+**Названить пользователям роли (после регистрации)**  
+USERS → username@dom.ru → Role Mapping → Assign role → Realm roles  
+выбрать роли → Assign  
+
 ## Примечания
 - Файл .env не хранится в репозитории. Использовать .env.example как шаблон.
 - Собранные .jar файлы не включаются в репозиторий, их генерирует Gradle при сборке.
 - Keycloak в Admin Console и заполнением KEYCLOAK_CLIENT_ID и KEYCLOAK_CLIENT_SECRET в .env 
 требуется заполнить другие переменные из .env и поднять контейнеры 
+- api-gateway -- единая точка входа, см. API в README.md внутри сервисов

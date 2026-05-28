@@ -15,10 +15,10 @@ public class TaskEventPublisher {
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     public void publish(TaskCreatedFlowEvent event) {
-        kafkaTemplate.send(TASK_STREAM_TOPIC, String.valueOf(event.taskId()), event);
+        kafkaTemplate.send(TASK_FLOW_TOPIC, String.valueOf(event.taskId()), event);
     }
 
     public void publish(TaskStreamEvent event) {
-        kafkaTemplate.send(TASK_FLOW_TOPIC, String.valueOf(event.id()), event);
+        kafkaTemplate.send(TASK_STREAM_TOPIC, String.valueOf(event.id()), event);
     }
 }

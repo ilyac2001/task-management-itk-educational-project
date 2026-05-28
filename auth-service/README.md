@@ -4,7 +4,7 @@
 Сервис авторизации и аунтефикации
 
 ## API
-Базовый URL: `http://localhost:8080`
+Базовый URL: `http://localhost:8081`
 
 1. **Регистрация пользвателя**
     - URL: `/api/auth/register`
@@ -22,11 +22,6 @@
 2. **Получение токена авторизации**
     - URL: `/oauth/token`
     - Метод: `POST`
-    - Headers:
-   ```text
-        Authorization: Basic base64(clientId:clientSecret)
-        Content-Type: application/x-www-form-urlencoded
-    ```
     - Тело запроса (form-data / x-www-form-urlencoded):
     ```text
         username=ilya@dom.ru

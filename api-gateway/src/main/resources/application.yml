@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: auth-service
+              uri: http://auth-service:8080
+              predicates:
+                - Path=/api/auth/**,/oauth/**
+
+            - id: task-service
+              uri: http://task-service:8080
+              predicates:
+                - Path=/api/tasks/**
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak:8080/realms/master
+
+keycloak:
+  base-url: http://keycloak:8080
+  realm: master

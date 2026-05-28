@@ -41,5 +41,6 @@ bin/
 
 # Игнорировать файл с секретами
 .env
+docker-compose.dev.yml
 
 textTask.txt

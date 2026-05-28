@@ -76,7 +76,9 @@ public class AuthServiceImpl implements AuthService {
                         .with("client_id", properties.clientId())
                         .with("client_secret", properties.clientSecret())
                         .with("username", request.email())
-                        .with("password", request.password()))
+                        .with("password", request.password())
+                        .with("scope", "openid")
+                )
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response ->
                         response.bodyToMono(String.class)
